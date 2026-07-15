@@ -19,12 +19,17 @@ services:
       dockerfile: docker/db/Dockerfile
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: fuelphp
+      MYSQL_DATABASE: reference_manager
     ports:
       - "3306:3306"
     networks:
       - fuelphp-network
+    volumes:
+      - db_data:/var/lib/mysql
 
 networks:
   fuelphp-network:
     driver: bridge
+
+volumes:
+  db_data:

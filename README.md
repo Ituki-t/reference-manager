@@ -1,19 +1,10 @@
-# readme
-## venderの生成
-```bash
-composer install
-```
-
-## Dockerの基本知識
-Dockerの基本的な概念については、以下のリンクを参考にしてください：
-- [Docker入門（1）](https://qiita.com/Sicut_study/items/4f301d000ecee98e78c9)
-- [Docker入門（2）](https://qiita.com/takusan64/items/4d622ce1858c426719c7)
+# REFARENCE-MANAGER
 
 ## セットアップ手順
 
 1. **リポジトリをクローン**
    ```bash
-   git clone <リポジトリURL>
+   git clone https://github.com/Ituki-t/reference-manager.git
    ```
 
 2. **dockerディレクトリに移動**
