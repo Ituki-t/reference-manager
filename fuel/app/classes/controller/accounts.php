@@ -27,5 +27,29 @@ class Controller_Accounts extends Controller_Template
     }
 
 
+    public function action_login()
+    {
+        $error = "";
 
+        if (\Input::method() == 'POST') {
+            $username = \Input::post('username');
+            $password = \Input::post('password');
+
+            // Validate input
+            if (empty($username) || empty($password)) {
+                $error = "すべての項目を入力してください。";
+            } else {
+                $user = Model_User::get_user_by_username($username);
+
+                if ($user && password_verify($password, $user['password'])) {
+                    \Session::set('user_id', $user['id']);
+                    \Response::redirect('dashboard');
+                } else {
+                    $error = "ユーザー名またはパスワードが正しくありません。";
+                }
+            }
+        }
+        $this->template->title = "ログイン";
+        $this->template->content = \View::forge('accounts/login', array('error' => $error));
+    }
 }
