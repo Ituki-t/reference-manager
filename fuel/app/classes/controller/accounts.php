@@ -18,7 +18,7 @@ class Controller_Accounts extends Controller_Template
             } else {
                 Model_User::create_user($username, $email, $password);
 
-                \Response::redirect('accounts/login');
+                return \Response::redirect('accounts/login');
             }
         }
 
@@ -43,7 +43,7 @@ class Controller_Accounts extends Controller_Template
 
                 if ($user && password_verify($password, $user['password'])) {
                     \Session::set('user_id', $user['id']);
-                    \Response::redirect('dashboard');
+                    return \Response::redirect('dashboard');
                 } else {
                     $error = "ユーザー名またはパスワードが正しくありません。";
                 }
@@ -51,5 +51,12 @@ class Controller_Accounts extends Controller_Template
         }
         $this->template->title = "ログイン";
         $this->template->content = \View::forge('accounts/login', array('error' => $error));
+    }
+
+
+    public function action_logout()
+    {
+        \Session::destroy();
+        return \Response::redirect('accounts/login');
     }
 }
