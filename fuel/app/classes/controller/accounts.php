@@ -71,8 +71,12 @@ class Controller_Accounts extends Controller_Template
 
     public function action_logout()
     {
+        \Config::load('remember', true);
+        $cookie_name = \Config::get('remember.cookie_name');
+        \Cookie::delete($cookie_name);
+
+        Model_User::set_remember_token(\Session::get('user_id'), null);
         \Session::destroy();
-        \Cookie::delete(\Config::get('remember.cookie_name'));
 
         return \Response::redirect('accounts/login');
     }
