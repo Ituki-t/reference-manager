@@ -33,4 +33,15 @@ class Model_User extends \Model
             ->execute()
             ->current();
     }
+
+
+    public static function set_remember_token($user_id, $token)
+    {
+        return \DB::update('users')
+            ->set(array(
+                'remember_token' => $token,
+            ))
+            ->where('id', $user_id)
+            ->execute();
+    }
 }

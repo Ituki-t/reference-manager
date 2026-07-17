@@ -19,4 +19,14 @@
     <div>
         <input type="submit" value="ログイン">
     </div>
+    <div>
+        <label for="remember">
+            <input
+                type="checkbox"
+                name="remember"
+                id="remember"
+                <?php echo Input::post('remember') ? 'checked' : ''; ?>
+            >
+            ログイン状態を保持する
+        </label>
 </form>

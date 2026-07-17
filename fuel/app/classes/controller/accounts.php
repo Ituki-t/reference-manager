@@ -34,6 +34,7 @@ class Controller_Accounts extends Controller_Template
         if (\Input::method() == 'POST') {
             $username = \Input::post('username');
             $password = \Input::post('password');
+            $remember = \Input::post('remember', false);
 
             // Validate input
             if (empty($username) || empty($password)) {
@@ -43,6 +44,20 @@ class Controller_Accounts extends Controller_Template
 
                 if ($user && password_verify($password, $user['password'])) {
                     \Session::set('user_id', $user['id']);
+                    \Session::set('username', $user['username']);
+
+                    if ($remember) {
+                        \Config::load('remember', true);
+                        $token = bin2hex(random_bytes(32));
+
+                        Model_User::set_remember_token($user['id'], $token);
+
+                        \Cookie::set(
+                            \Config::get('remember.cookie_name'),
+                            $token,
+                            \Config::get('remember.expiration')
+                        );
+                    }
                     return \Response::redirect('dashboard');
                 } else {
                     $error = "ユーザー名またはパスワードが正しくありません。";
@@ -57,6 +72,8 @@ class Controller_Accounts extends Controller_Template
     public function action_logout()
     {
         \Session::destroy();
+        \Cookie::delete(\Config::get('remember.cookie_name'));
+
         return \Response::redirect('accounts/login');
     }
 }
