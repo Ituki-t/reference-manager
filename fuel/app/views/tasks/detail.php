@@ -6,3 +6,4 @@
     <p>締切日: <?php echo $task['deadline']; ?></p>
 <p>作成者: <?php echo $task['username']; ?></p>
 </div>
+<a href="<?php echo \Uri::create('tasks/update/' . $task['id']); ?>">編集</a>

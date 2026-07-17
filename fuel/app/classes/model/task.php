@@ -11,6 +11,20 @@ class Model_Task extends \Model
             ->as_array();
     }
 
+    public static function get_task_by_id($task_id)
+    {
+        return \DB::select(
+            'tasks.*',
+            array('users.username', 'username')
+        )
+            ->from('tasks')
+            ->join('users')
+            ->on('tasks.user_id', '=', 'users.id')
+            ->where('tasks.id', $task_id)
+            ->execute()
+            ->current();
+    }
+
     public static function create_task($title, $description, $status, $dev_location, $deadline, $user_id)
     {
         return \DB::insert('tasks')
@@ -27,17 +41,20 @@ class Model_Task extends \Model
             ->execute();
     }
 
-    public static function get_task_by_id($task_id)
+
+    public static function update_task($task_id, $title, $description, $status, $dev_location, $deadline)
     {
-        return \DB::select(
-            'tasks.*',
-            array('users.username', 'username')
-        )
-            ->from('tasks')
-            ->join('users')
-            ->on('tasks.user_id', '=', 'users.id')
-            ->where('tasks.id', $task_id)
-            ->execute()
-            ->current();
+        return \DB::update('tasks')
+            ->set(array(
+                'title' => $title,
+                'description' => $description,
+                'status' => $status,
+                'dev_location' => $dev_location,
+                'deadline' => $deadline,
+                'updated_at' => date('Y-m-d H:i:s'),
+            ))
+            ->where('id', $task_id)
+            ->execute();
     }
+
 }
