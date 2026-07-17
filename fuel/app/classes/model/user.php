@@ -44,4 +44,14 @@ class Model_User extends \Model
             ->where('id', $user_id)
             ->execute();
     }
+
+
+    public static function get_user_by_token($token)
+    {
+        return \DB::select('*')
+            ->from('users')
+            ->where('remember_token', $token)
+            ->execute()
+            ->current();
+    }
 }

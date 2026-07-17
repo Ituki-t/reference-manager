@@ -2,6 +2,35 @@
 
 class Controller_Tasks extends Controller_Template
 {
+    public function before()
+    {
+        parent::before();
+
+        if (\Session::get('user_id') !== null) {
+            return ;
+        }
+
+        // loginを保持する処理
+        \Config::load('remember', true);
+        $cookie_name = \Config::get('remember.cookie_name');
+        $token = \Cookie::get($cookie_name);
+
+        if (empty($token)) {
+            return \Response::redirect('accounts/login');
+        }
+
+        $user = Model_User::get_user_by_token($token);
+
+        if (!$user) {
+            \Cookie::delete($cookie_name);
+            return \Response::redirect('accounts/login');
+        }
+
+        \Session::set('user_id', $user['id']);
+        \Session::set('username', $user['username']);
+    }
+
+
     public function action_index()
     {
         $tasks = Model_Task::get_tasks_all();
