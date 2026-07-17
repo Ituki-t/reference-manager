@@ -58,11 +58,10 @@ class Model_Task extends \Model
     }
 
 
-    public static function delete_task($task_id, $user_id)
+    public static function delete_task($task_id)
     {
         return \DB::delete('tasks')
             ->where('id', $task_id)
-            ->where('user_id', $user_id) // Ensure only the owner can delete
             ->execute();
     }
 

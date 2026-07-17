@@ -79,6 +79,12 @@ class Controller_Tasks extends Controller_Template
             return \Response::redirect('tasks');
         }
 
+        $user_id = \Session::get('user_id');
+        if ($task['user_id'] !== $user_id) {
+            \Session::set_flash('error', 'このタスクを更新する権限がありません。');
+            return \Response::redirect('tasks');
+        }
+
         if (\Input::method() == 'POST') {
             $title = \Input::post('title');
             $description = \Input::post('description');
@@ -105,8 +111,12 @@ class Controller_Tasks extends Controller_Template
         if (!$task) {
             return \Response::redirect('tasks');
         }
+        if ($task['user_id'] !== $user_id) {
+            \Session::set_flash('error', 'このタスクを削除する権限がありません。');
+            return \Response::redirect('tasks');
+        }
 
-        Model_Task::delete_task($task_id, $user_id);
+        Model_Task::delete_task($task_id);
         return \Response::redirect('tasks');
     }
 }
