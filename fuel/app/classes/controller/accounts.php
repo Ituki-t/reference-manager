@@ -58,7 +58,7 @@ class Controller_Accounts extends Controller_Template
                             \Config::get('remember.expiration')
                         );
                     }
-                    return \Response::redirect('dashboard');
+                    return \Response::redirect('tasks');
                 } else {
                     $error = "ユーザー名またはパスワードが正しくありません。";
                 }
