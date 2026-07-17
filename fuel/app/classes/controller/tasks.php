@@ -27,4 +27,17 @@ class Controller_Tasks extends Controller_Template
         $this->template->title = "タスク作成";
         $this->template->content = \View::forge('tasks/create');
     }
+
+
+    public function action_detail($task_id)
+    {
+        $task = Model_Task::get_task_by_id($task_id);
+
+        if (!$task) {
+            \Response::redirect('tasks');
+        }
+
+        $this->template->title = "タスク詳細";
+        $this->template->content = \View::forge('tasks/detail', array('task' => $task));
+    }
 }

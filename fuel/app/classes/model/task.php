@@ -26,4 +26,18 @@ class Model_Task extends \Model
             ))
             ->execute();
     }
+
+    public static function get_task_by_id($task_id)
+    {
+        return \DB::select(
+            'tasks.*',
+            array('users.username', 'username')
+        )
+            ->from('tasks')
+            ->join('users')
+            ->on('tasks.user_id', '=', 'users.id')
+            ->where('tasks.id', $task_id)
+            ->execute()
+            ->current();
+    }
 }
