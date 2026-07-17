@@ -66,4 +66,18 @@ class Controller_Tasks extends Controller_Template
         $this->template->title = "タスク編集";
         $this->template->content = \View::forge('tasks/update', array('task' => $task));
     }
+
+
+    public function action_delete($task_id)
+    {
+        $task = Model_Task::get_task_by_id($task_id);
+        $user_id = \Session::get('user_id');
+
+        if (!$task) {
+            return \Response::redirect('tasks');
+        }
+
+        Model_Task::delete_task($task_id, $user_id);
+        return \Response::redirect('tasks');
+    }
 }
