@@ -29,3 +29,6 @@
         </ul>
     <?php endif; ?>
 </div>
+<div>
+    <a href="<?php echo \Uri::create('referenceitems/create/' . $task['id']); ?>">参考資料を追加</a>
+</div>
