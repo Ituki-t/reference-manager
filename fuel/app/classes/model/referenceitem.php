@@ -23,4 +23,14 @@ class Model_ReferenceItem extends \Model
             'updated_at' => date('Y-m-d H:i:s'),
         ))->execute();
     }
+
+
+    public static function get_reference_item_by_id($reference_item_id)
+    {
+        return \DB::select()
+            ->from('reference_items')
+            ->where('id', $reference_item_id)
+            ->execute()
+            ->current();
+    }
 }

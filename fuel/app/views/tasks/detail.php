@@ -21,7 +21,7 @@
         <ul>
             <?php foreach ($reference_items as $item): ?>
                 <li>
-                    <a href="<?php echo e($item['url']); ?>" target="_blank">
+                    <a href="<?php echo \Uri::create('referenceitems/detail/' . $item['id']); ?>" target="_blank">
                         <?php echo e($item['title']); ?>
                     </a>
                 </li>
