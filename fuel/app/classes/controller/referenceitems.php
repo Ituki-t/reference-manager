@@ -30,4 +30,27 @@ class Controller_ReferenceItems extends Controller_Template
         $this->template->title = '参考資料の詳細';
         $this->template->content = \View::forge('referenceitems/detail', array('reference_item' => $reference_item));
     }
+
+
+    public function action_update($reference_item_id)
+    {
+        $reference_item = Model_ReferenceItem::get_reference_item_by_id($reference_item_id);
+
+        if (!$reference_item) {
+            return \Response::redirect(\Uri::create('tasks'));
+        }
+
+        if (\Input::method() == 'POST') {
+            $title = \Input::post('title');
+            $url = \Input::post('url');
+            $memo = \Input::post('memo');
+
+            Model_ReferenceItem::update_reference_item($reference_item_id, $title, $url, $memo);
+
+            return \Response::redirect(\Uri::create('tasks/detail/' . $reference_item['task_id']));
+        }
+
+        $this->template->title = '参考資料の更新';
+        $this->template->content = \View::forge('referenceitems/update', array('reference_item' => $reference_item));
+    }
 }
