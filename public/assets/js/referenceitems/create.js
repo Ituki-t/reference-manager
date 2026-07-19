@@ -1,5 +1,3 @@
-console.log('ReferenceItemViewModel initialized');
-
 document.addEventListener('DOMContentLoaded', function () {
 
     function ReferenceItemViewModel() {

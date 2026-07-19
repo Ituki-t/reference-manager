@@ -31,6 +31,6 @@
             type="text" 
             data-bind="value: keyword, valueUpdate: 'input'"
         >
-        <p data-bind="value: keyword"></p> 
+        <p data-bind="text: keyword"></p> 
     </div>
 </form>
