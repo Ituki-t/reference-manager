@@ -33,8 +33,8 @@ class Model_ReferenceItem extends \Model
             'memo' => $memo,
             'updated_at' => date('Y-m-d H:i:s'),
         ))
-        ->where('id', $reference_item_id)
-        ->execute();
+            ->where('id', $reference_item_id)
+            ->execute();
     }
 
 
@@ -47,3 +47,4 @@ class Model_ReferenceItem extends \Model
             ->current();
     }
 }
+
