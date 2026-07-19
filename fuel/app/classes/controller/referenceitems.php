@@ -53,4 +53,18 @@ class Controller_ReferenceItems extends Controller_Template
         $this->template->title = '参考資料の更新';
         $this->template->content = \View::forge('referenceitems/update', array('reference_item' => $reference_item));
     }
+
+
+    public function action_delete($reference_item_id)
+    {
+        $reference_item = Model_ReferenceItem::get_reference_item_by_id($reference_item_id);
+
+        if (!$reference_item) {
+            return \Response::redirect(\Uri::create('tasks'));
+        }
+
+        Model_ReferenceItem::delete_reference_item($reference_item_id);
+
+        return \Response::redirect(\Uri::create('tasks/detail/' . $reference_item['task_id']));
+    }
 }

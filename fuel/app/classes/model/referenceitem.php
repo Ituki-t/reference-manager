@@ -46,5 +46,13 @@ class Model_ReferenceItem extends \Model
             ->execute()
             ->current();
     }
+
+
+    public static function delete_reference_item($reference_item_id)
+    {
+        \DB::delete('reference_items')
+            ->where('id', $reference_item_id)
+            ->execute();
+    }
 }
 
