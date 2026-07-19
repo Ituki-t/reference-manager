@@ -1,3 +1,5 @@
+<?php echo Asset::js('referenceitems/create.js'); ?>
+
 <form action="<?php echo Uri::create('referenceitems/create/' . $task_id); ?>" method="post">
     <div>
         <label for="title">タイトル</label>
@@ -25,6 +27,10 @@
         ><?php echo Input::post('memo'); ?></textarea>
     </div>
     <div>
-        <input type="submit" value="作成">
+        <input 
+            type="text" 
+            data-bind="value: keyword, valueUpdate: 'input'"
+        >
+        <p data-bind="value: keyword"></p> 
     </div>
 </form>
