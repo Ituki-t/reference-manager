@@ -60,14 +60,21 @@ class Controller_Tasks extends Controller_Template
 
     public function action_detail($task_id)
     {
+        // tasks/detailの処理
         $task = Model_Task::get_task_by_id($task_id);
 
         if (!$task) {
             return \Response::redirect('tasks');
         }
 
+        // reference_items/indexの処理
+        $reference_items = Model_ReferenceItem::get_reference_items_by_task_id($task_id);
+
         $this->template->title = "タスク詳細";
-        $this->template->content = \View::forge('tasks/detail', array('task' => $task));
+        $this->template->content = \View::forge('tasks/detail', array(
+            'task' => $task,
+            'reference_items' => $reference_items
+            ));
     }
 
 
