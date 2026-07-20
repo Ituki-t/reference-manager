@@ -21,4 +21,19 @@ class Model_Tag extends \Model
             ->execute()
             ->as_array();
     }
+
+
+    public static function get_tags_by_reference_item_id($reference_item_id)
+    {
+        return \DB::select(
+            'tags.id', 
+            'tags.name'
+        )
+            ->from('tags')
+            ->join('reference_item_tags')
+            ->on('reference_item_tags.tag_id', '=', 'tags.id')
+            ->where('reference_item_tags.reference_item_id', $reference_item_id)
+            ->execute()
+            ->as_array();
+    }
 }
