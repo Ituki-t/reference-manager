@@ -8,9 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
         self.selectedTags = ko.observableArray([]);
 
 
-        // test
-        self.tags = ko.observableArray([]);
-
         self.loadTags = function () {
             fetch('/tags')
                 .then(function (response) {
@@ -18,19 +15,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .then(function (tags) {
                     console.log('Fetched tags:', tags);
-                    self.tags(tags);
+                    self.searchResults(tags);
                 })
                 .catch(function (error) {
                     console.error('Error fetching tags:', error);
                 });
         };
-        self.loadTags();
-
 
         self.searchTags = function () {
             const keyword = self.keyword().trim();
             if (keyword === '') {
-                self.searchResults([]);
+                self.loadTags();
                 return;
             }
 
@@ -59,6 +54,8 @@ document.addEventListener('DOMContentLoaded', function () {
         self.removeTag = function (tag) {
             self.selectedTags.remove(tag);
         };
+
+        self.loadTags();
     }
 
     ko.applyBindings(new ReferenceItemViewModel());
