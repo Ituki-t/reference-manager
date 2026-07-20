@@ -51,6 +51,11 @@
             <p>選択されたタグ:</p>
             <div data-bind="foreach: selectedTags">
                 <span data-bind="text: name"></span>
+                <input 
+                    type="hidden" 
+                    name="tag_ids[]"
+                    data-bind="value: id"
+                >
 
                 <button 
                     type="button" 
