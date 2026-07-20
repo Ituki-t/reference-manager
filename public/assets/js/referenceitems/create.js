@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     function ReferenceItemViewModel() {
-        var self = this;
+        const self = this;
 
         self.keyword = ko.observable('');
         self.searchResults = ko.observableArray([]);
@@ -25,6 +25,31 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
         };
         self.loadTags();
+
+
+        self.searchTags = function () {
+            const keyword = self.keyword().trim();
+            if (keyword === '') {
+                self.searchResults([]);
+                return;
+            }
+
+            const url = '/tags?keyword=' + encodeURIComponent(keyword);
+            fetch(url)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (results) {
+                    self.searchResults(results);
+                })
+                .catch(function (error) {
+                    console.error('Error searching tags:', error);
+                });
+        };
+
+        self.keyword.subscribe(function () {
+            self.searchTags();
+        });
 
         
         self.selectTag = function (tag) {

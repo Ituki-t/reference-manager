@@ -28,7 +28,6 @@
     </div>
 
 
-    /* tagの処理 */
     <div>
         <label for="tag-keyword">タグ検索</label>
         <input
@@ -39,7 +38,7 @@
         >
         <p data-bind="text: keyword"></p>
 
-        <div data-bind="foreach: tags">
+        <div data-bind="foreach: searchResults">
             <button
                 type="button"
                 data-bind="
