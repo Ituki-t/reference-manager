@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     return response.json();
                 })
                 .then(function (tags) {
-                    console.log('Fetched tags:', tags);
+                    console.log('Fetched tags:', tags); //test log
                     self.searchResults(tags);
                 })
                 .catch(function (error) {
