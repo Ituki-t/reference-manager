@@ -1,6 +1,6 @@
-<? php
+<?php
 
-class Controller_Tag extends Controller_Template
+class Controller_Tags extends Controller
 {
     public function action_index()
     {
@@ -14,7 +14,7 @@ class Controller_Tag extends Controller_Template
         }
 
         return \Response::forge(
-            json_encode($tags),
+            json_encode($tags, JSON_UNESCAPED_UNICODE),
             200,
             array('Content-Type' => 'application/json')
         );
