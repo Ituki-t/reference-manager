@@ -11,4 +11,12 @@ class Model_ReferenceItemTag extends \Model
             ))
             ->execute();
     }
+
+
+    public static function delete_tags_by_reference_item_id($reference_item_id)
+    {
+        \DB::delete('reference_item_tags')
+            ->where('reference_item_id', $reference_item_id)
+            ->execute();
+    }
 }

@@ -54,13 +54,25 @@ class Controller_ReferenceItems extends Controller_Template
             $url = \Input::post('url');
             $memo = \Input::post('memo');
 
+            $tag_ids = \Input::post('tag_ids', array());
+
             Model_ReferenceItem::update_reference_item($reference_item_id, $title, $url, $memo);
+
+            Model_ReferenceItemTag::delete_tags_by_reference_item_id($reference_item_id);
+            foreach ($tag_ids as $tag_id) {
+                Model_ReferenceItemTag::add_tag_to_reference_item($reference_item_id, $tag_id);
+            }
 
             return \Response::redirect(\Uri::create('tasks/detail/' . $reference_item['task_id']));
         }
 
+        $tags = Model_Tag::get_tags_by_reference_item_id($reference_item_id);
+
         $this->template->title = '参考資料の更新';
-        $this->template->content = \View::forge('referenceitems/update', array('reference_item' => $reference_item));
+        $this->template->content = \View::forge('referenceitems/update', array(
+            'reference_item' => $reference_item,
+            'tags' => $tags
+        ));
     }
 
 
