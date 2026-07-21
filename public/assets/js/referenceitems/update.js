@@ -14,8 +14,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     return response.json();
                 })
                 .then(function (tags) {
-                    console.log('Fetched tags:', tags); //test log
-                    self.searchResults(tags);
+                    const filterdTags = tags.filter(function (tag) {
+                        return !self.selectedTags().some(function (selectedTag) {
+                            return selectedTag.id === tag.id;
+                        });
+                    });
+                    self.searchResults(filterdTags);
+
                 })
                 .catch(function (error) {
                     console.error('Error fetching tags:', error);
@@ -35,7 +40,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     return response.json();
                 })
                 .then(function (results) {
-                    self.searchResults(results);
+                    const filterdResults = results.filter(function (tag) {
+                        return !self.selectedTags().some(function (selectedTag) {
+                            return selectedTag.id === tag.id;
+                        });
+                    });
+                    self.searchResults(filterdResults);
                 })
                 .catch(function (error) {
                     console.error('Error searching tags:', error);
@@ -49,10 +59,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         self.selectTag = function (tag) {
             self.selectedTags.push(tag);
+            self.searchTags();
         };
 
         self.removeTag = function (tag) {
             self.selectedTags.remove(tag);
+            self.searchTags();
         };
 
         self.loadTags();
