@@ -35,7 +35,6 @@
             id="tag-keyword"
             data-bind="value: keyword, valueUpdate: 'input'"
         >
-        <p data-bind="text: keyword"></p>
 
         <div data-bind="foreach: searchResults">
             <button
@@ -46,6 +45,14 @@
                 "
             ></button>
         </div>
+
+        <button 
+            type="button"
+            data-bind="click: createTag"
+        >新しいタグを作成
+        </button>
+
+
         <div>
             <p>選択されたタグ:</p>
             <div data-bind="foreach: selectedTags">
