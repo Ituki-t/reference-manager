@@ -2,6 +2,15 @@
     <h2><?php echo e($reference_item['title']); ?></h2>
     <p><?php echo e($reference_item['url']); ?></p>
     <p><?php echo e($reference_item['memo']); ?></p>
+    <p><?php echo e($reference_item['created_at']); ?></p>
+    <?php if (!empty($tags)): ?>
+        <p>タグ:</p>
+        <ul>
+            <?php foreach ($tags as $tag): ?>
+                <li><?php echo e($tag['name']); ?></li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
     <a href="<?php echo Uri::create('referenceitems/update/' . $reference_item['id']); ?>">編集</a>
     <form 
         action="<?php echo Uri::create('referenceitems/delete/' . $reference_item['id']); ?>" 
