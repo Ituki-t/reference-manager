@@ -1,4 +1,3 @@
-<?php echo Asset::js('referenceitems/update.js'); ?>
 <form action="<?php echo Uri::create('referenceitems/update/' . $reference_item['id']); ?>" method="post">
     <div>
 	<label for="title">タイトル</label>
@@ -82,3 +81,5 @@
 <script>
     window.initialTags = <?php echo json_encode($tags, JSON_UNESCAPED_UNICODE); ?>;
 </script>
+
+<?php echo Asset::js('referenceitems/update.js'); ?>
