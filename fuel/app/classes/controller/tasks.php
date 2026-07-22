@@ -126,7 +126,7 @@ class Controller_Tasks extends Controller_Template
             return \Response::redirect('tasks');
         }
 
-        Model_Task::delete_task($task_id);
+        Model_Task::delete_task($task_id, $user_id);
         return \Response::redirect('tasks');
     }
 }
