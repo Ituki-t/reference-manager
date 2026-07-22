@@ -52,6 +52,8 @@ class Controller_Tasks extends Controller_Template
             $user_id = \Session::get('user_id');
 
             Model_Task::create_task($title, $description, $status, $dev_location, $deadline, $user_id);
+
+            return \Response::redirect('tasks');
         }
 
         $this->template->title = "タスク作成";
