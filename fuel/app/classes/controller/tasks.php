@@ -33,7 +33,8 @@ class Controller_Tasks extends Controller_Template
 
     public function action_index()
     {
-        $tasks = Model_Task::get_tasks_all();
+        $user_id = \Session::get('user_id');
+        $tasks = Model_Task::get_tasks_all($user_id);
 
         $this->template->title = "タスク一覧";
         $this->template->content = \View::forge('tasks/index', array('tasks' => $tasks));
@@ -60,8 +61,9 @@ class Controller_Tasks extends Controller_Template
 
     public function action_detail($task_id)
     {
+        $user_id = \Session::get('user_id');
         // tasks/detailの処理
-        $task = Model_Task::get_task_by_id($task_id);
+        $task = Model_Task::get_task_by_id($task_id, $user_id);
 
         if (!$task) {
             return \Response::redirect('tasks');
@@ -80,13 +82,13 @@ class Controller_Tasks extends Controller_Template
 
     public function action_update($task_id)
     {
-        $task = Model_Task::get_task_by_id($task_id);
+        $user_id = \Session::get('user_id');
+        $task = Model_Task::get_task_by_id($task_id, $user_id);
 
         if (!$task) {
             return \Response::redirect('tasks');
         }
 
-        $user_id = \Session::get('user_id');
         if ($task['user_id'] !== $user_id) {
             \Session::set_flash('error', 'このタスクを更新する権限がありません。');
             return \Response::redirect('tasks');
@@ -100,7 +102,7 @@ class Controller_Tasks extends Controller_Template
             $deadline = \Input::post('deadline');
             $updated_at = time();
 
-            Model_Task::update_task($task_id, $title, $description, $status, $dev_location, $deadline, $updated_at);
+            Model_Task::update_task($task_id, $title, $description, $status, $dev_location, $deadline, $user_id);
 
             return \Response::redirect('tasks/detail/' . $task_id);
         }
@@ -112,8 +114,9 @@ class Controller_Tasks extends Controller_Template
 
     public function action_delete($task_id)
     {
-        $task = Model_Task::get_task_by_id($task_id);
         $user_id = \Session::get('user_id');
+
+        $task = Model_Task::get_task_by_id($task_id, $user_id);
 
         if (!$task) {
             return \Response::redirect('tasks');
