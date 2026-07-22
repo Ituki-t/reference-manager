@@ -1,17 +1,32 @@
-<a href="<?php echo \Uri::create('/tasks/create'); ?>">新しいタスクを作成</a>
-<?php if (empty($tasks)): ?>
-    <p>タスクはありません。</p>
-<?php else: ?>
-    <ul>
-        <?php foreach ($tasks as $task): ?>
-            <li>
-                <a href="<?php echo \Uri::create('/tasks/detail/' . $task['id']); ?>">
-                    <strong><?php echo e($task['title']); ?></strong>
-                </a><br>
-                <?php echo nl2br(e($task['description'])); ?><br>
-                作成日: <?php echo e($task['created_at']); ?>
-            </li>
-        <?php endforeach; ?>
-    </ul>
+<input
+    type="text"
+    data-bind="value: keyword, valueUpdate: 'input'"
+    placeholder="タスクを検索"
+>
 
-<?php endif; ?>
+<p data-bind="visible: tasks().length === 0">
+    タスクはありません。
+</p>
+
+<ul data-bind="foreach: tasks">
+    <li>
+        <a data-bind="
+            attr: {
+                href: '/tasks/detail/' + id
+            }
+        ">
+            <strong data-bind="text: title"></strong>
+        </a>
+
+        <br>
+
+        <span data-bind="text: description"></span>
+
+        <br>
+
+        作成日:
+        <span data-bind="text: created_at"></span>
+    </li>
+</ul>
+
+<?php echo \Asset::js('tasks/index.js'); ?>

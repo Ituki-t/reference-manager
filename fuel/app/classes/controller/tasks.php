@@ -1,5 +1,4 @@
 <?php
-
 class Controller_Tasks extends Controller_Template
 {
     public function before()
@@ -130,5 +129,24 @@ class Controller_Tasks extends Controller_Template
 
         Model_Task::delete_task($task_id, $user_id);
         return \Response::redirect('tasks');
+    }
+
+
+    public function action_search()
+    {
+
+        $user_id = \Session::get('user_id');
+        $keyword = trim(\Input::get('keyword', ''));
+
+        $tasks = Model_Task::search_tasks_by_keyword(
+            $user_id,
+            $keyword
+        );
+
+        return \Response::forge(
+            json_encode($tasks, JSON_UNESCAPED_UNICODE),
+            200,
+            array('Content-Type' => 'application/json')
+        );
     }
 }
