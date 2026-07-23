@@ -56,5 +56,23 @@ class Model_ReferenceItem extends \Model
             ->where('id', $reference_item_id)
             ->execute();
     }
-}
 
+
+    public static function get_reference_items_by_keyword($keyword, $task_id)
+    {
+        return \DB::select('reference_items.*')
+            ->from('reference_items')
+            ->join('reference_item_tags', 'LEFT')
+            ->on('reference_items.id', '=', 'reference_item_tags.reference_item_id')
+            ->join('tags', 'LEFT')
+            ->on('reference_item_tags.tag_id', '=', 'tags.id')
+            ->where('task_id', '=', $task_id)
+            ->where_open()
+                ->where('reference_items.title', 'like', '%' . $keyword . '%')
+                ->or_where('tags.name', 'like', '%' . $keyword . '%')
+            ->where_close()
+            ->distinct()
+            ->execute()
+            ->as_array();
+    }
+}
