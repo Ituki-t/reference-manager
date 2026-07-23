@@ -72,7 +72,7 @@
                     ></span>
                 </td>
 
-                <td data-bind="text: dev_location"></td>
+                <td data-bind="text: reference_items_count"></td>
 
                 <td data-bind="text: deadline || '-'"></td>
             </tr>
