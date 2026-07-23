@@ -30,14 +30,35 @@ class Controller_Tasks extends Controller_Template
     }
 
 
-    public function action_index()
-    {
-        $user_id = \Session::get('user_id');
-        $tasks = Model_Task::get_tasks_all($user_id);
+  public function action_index()
+  {
+    $user_id = \Session::get('user_id');
+    $tasks = Model_Task::get_tasks_all($user_id);
 
-        $this->template->title = "タスク一覧";
-        $this->template->content = \View::forge('tasks/index', array('tasks' => $tasks));
+    foreach ($tasks as &$task) {
+      switch ($task['status']) {
+        case 0:
+          $task['status_text'] = '未着手';
+          $task['status_class'] = 'bg-secondary';
+          break;
+        case 1:
+          $task['status_text'] = '進行中';
+            $task['status_class'] = 'bg-primary';
+          break;
+        case 2:
+          $task['status_text'] = '完了';
+          $task['status_class'] = 'bg-success';
+          break;
+        default:
+          $task['status_text'] = '未着手';
+          $task['status_class'] = 'bg-secondary';
+      }
+      unset($task); 
     }
+
+    $this->template->title = "タスク一覧";
+    $this->template->content = \View::forge('tasks/index', array('tasks' => $tasks));
+   }
 
 
     public function action_create()
@@ -132,21 +153,42 @@ class Controller_Tasks extends Controller_Template
     }
 
 
-    public function action_search()
-    {
+  public function action_search()
+  {
 
-        $user_id = \Session::get('user_id');
-        $keyword = trim(\Input::get('keyword', ''));
+    $user_id = \Session::get('user_id');
+    $keyword = trim(\Input::get('keyword', ''));
 
-        $tasks = Model_Task::search_tasks_by_keyword(
-            $user_id,
-            $keyword
-        );
+    $tasks = Model_Task::search_tasks_by_keyword(
+      $user_id,
+      $keyword
+    );
 
-        return \Response::forge(
-            json_encode($tasks, JSON_UNESCAPED_UNICODE),
-            200,
-            array('Content-Type' => 'application/json')
-        );
+    foreach ($tasks as &$task) {
+      switch ($task['status']) {
+        case 0:
+          $task['status_text'] = '未着手';
+          $task['status_class'] = 'bg-secondary';
+          break;
+        case 1:
+          $task['status_text'] = '進行中';
+            $task['status_class'] = 'bg-primary';
+          break;
+        case 2:
+          $task['status_text'] = '完了';
+          $task['status_class'] = 'bg-success';
+          break;
+        default:
+          $task['status_text'] = '未着手';
+          $task['status_class'] = 'bg-secondary';
+      }
+      unset($task); 
+    }
+
+    return \Response::forge(
+        json_encode($tasks, JSON_UNESCAPED_UNICODE),
+        200,
+        array('Content-Type' => 'application/json')
+    );
     }
 }

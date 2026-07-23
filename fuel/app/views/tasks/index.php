@@ -57,17 +57,8 @@
                     <span
                         class="badge"
                         data-bind="
-                            text:
-                                status == 1
-                                    ? '未着手'
-                                    : status == 2
-                                        ? '進行中'
-                                        : '完了',
-                            css: {
-                                'bg-secondary': status == 1,
-                                'bg-primary': status == 2,
-                                'bg-success': status == 3
-                            }
+                            text: status_text,
+                            css: status_class 
                         "
                     ></span>
                 </td>
