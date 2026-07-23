@@ -1,54 +1,131 @@
-<div>
-    <h2><?php echo e($task['title']); ?></h2>
-    <p><?php echo e($task['description']); ?></p>
-    <p>status: <?php echo e($task['status']); ?></p>
-    <p>開発場所: <?php echo e($task['dev_location']); ?></p>
-    <p>締切日: <?php echo e($task['deadline']); ?></p>
-<p>作成者: <?php echo e($task['username']); ?></p>
-</div>
-<a href="<?php echo \Uri::create('tasks/update/' . $task['id']); ?>">編集</a>
-<form action="<?php echo \Uri::create('tasks/delete/' . $task['id']); ?>"
-    method="post"
-    onsubmit="return confirm('本当に削除しますか？');">
-    <input type="submit" value="削除">
-</form>
+<div class="card">
+  <div class="card-body">
 
+    <h2 class="card-title mb-4">
+      <?php echo e($task['title']); ?>
+    </h2>
 
-<div>
-    <h3>参考資料一覧</h3>
-    <input type="hidden" id="taskID" value="<?php echo e($task['id']); ?>">
+    <table class="table table-borderless">
+      <tbody>
+        <tr>
+          <th>説明・メモ</th>
+          <td><?php echo e($task['description']); ?></td>
+        </tr>
 
-    <input 
-        type="text" 
+        <tr>
+          <th>ステータス</th>
+          <td>
+            <span class="badge <?php echo e($task['status_class']); ?>">
+              <?php echo e($task['status_text']); ?>
+            </span>
+          </td>
+        </tr>
+
+        <tr>
+          <th>開発場所</th>
+          <td><?php echo e($task['dev_location']); ?></td>
+        </tr>
+
+        <tr>
+          <th>締切日</th>
+          <td><?php echo e($task['deadline']); ?></td>
+        </tr>
+
+        <tr>
+          <th>作成者</th>
+          <td><?php echo e($task['username']); ?></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="mb-4">
+      <a
+        href="<?php echo \Uri::create('tasks/update/' . $task['id']); ?>"
+        class="btn btn-secondary"
+      >
+        編集
+      </a>
+
+      <form
+        action="<?php echo \Uri::create('tasks/delete/' . $task['id']); ?>"
+        method="post"
+        class="d-inline"
+        onsubmit="return confirm('本当に削除しますか？');"
+      >
+        <input
+          type="submit"
+          value="削除"
+          class="btn btn-danger"
+        >
+      </form>
+    </div>
+
+    <hr>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="mb-0">参考資料</h3>
+
+      <a
+        href="<?php echo \Uri::create('referenceitems/create/' . $task['id']); ?>"
+        class="btn btn-primary"
+      >
+        ＋参考資料追加
+      </a>
+    </div>
+
+    <input
+      type="hidden"
+      id="taskID"
+      value="<?php echo e($task['id']); ?>"
+    >
+
+    <div class="mb-3">
+      <input
+        type="text"
+        class="form-control"
         data-bind="value: keyword, valueUpdate: 'input'"
-        placeholder="参考資料を検索">
+        placeholder="参考資料を検索"
+      >
+    </div>
 
     <p data-bind="visible: referenceItems().length === 0">
-        参考資料はありません。
+      参考資料はありません。
     </p>
-    <ul data-bind="foreach: referenceItems">
-        <li>
-            <a data-bind="
+
+    <table
+      class="table table-striped"
+      data-bind="visible: referenceItems().length > 0"
+    >
+      <thead>
+        <tr>
+          <th>タイトル</th>
+          <th>メモ</th>
+          <th>作成日</th>
+        </tr>
+      </thead>
+
+      <tbody data-bind="foreach: referenceItems">
+        <tr>
+          <td>
+            <a
+              data-bind="
                 attr: {
-                    href: '/referenceitems/detail/' + id
+                  href: '/referenceitems/detail/' + id
                 }
-            ">
-                <strong data-bind="text: title"></strong>
+              "
+            >
+              <span data-bind="text: title"></span>
             </a>
+          </td>
 
-            <br>
+          <td data-bind="text: memo"></td>
 
-            <span data-bind="text: memo"></span>
+          <td data-bind="text: created_at"></td>
+        </tr>
+      </tbody>
+    </table>
 
-            <br>
-
-            作成日:
-            <span data-bind="text: created_at"></span>
-        </li>
-    </ul>
-
+  </div>
 </div>
-<div>
-    <a href="<?php echo \Uri::create('referenceitems/create/' . $task['id']); ?>">参考資料を追加</a>
-</div>
+
 <?php echo \Asset::js('referenceitems/index.js'); ?>

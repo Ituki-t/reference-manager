@@ -53,8 +53,8 @@ class Controller_Tasks extends Controller_Template
           $task['status_text'] = '未着手';
           $task['status_class'] = 'bg-secondary';
       }
-      unset($task); 
     }
+    unset($task); 
 
     $this->template->title = "タスク一覧";
     $this->template->content = \View::forge('tasks/index', array('tasks' => $tasks));
@@ -81,25 +81,44 @@ class Controller_Tasks extends Controller_Template
     }
 
 
-    public function action_detail($task_id)
-    {
-        $user_id = \Session::get('user_id');
-        // tasks/detailの処理
-        $task = Model_Task::get_task_by_id($task_id, $user_id);
+  public function action_detail($task_id)
+  {
+    $user_id = \Session::get('user_id');
+    // tasks/detailの処理
+    $task = Model_Task::get_task_by_id($task_id, $user_id);
 
-        if (!$task) {
-            return \Response::redirect('tasks');
-        }
+    if (!$task) {
+      return \Response::redirect('tasks');
+    }
+
+    switch ($task['status']) {
+      case 0:
+        $task['status_text'] = '未着手';
+        $task['status_class'] = 'bg-secondary';
+        break;
+      case 1:
+        $task['status_text'] = '進行中';
+        $task['status_class'] = 'bg-primary';
+        break;
+      case 2:
+        $task['status_text'] = '完了';
+        $task['status_class'] = 'bg-success';
+        break;
+      default:
+        $task['status_text'] = '未着手';
+        $task['status_class'] = 'bg-secondary';
+    }
+
 
         // reference_items/indexの処理
-        $reference_items = Model_ReferenceItem::get_reference_items_by_task_id($task_id);
+    $reference_items = Model_ReferenceItem::get_reference_items_by_task_id($task_id);
 
-        $this->template->title = "タスク詳細";
-        $this->template->content = \View::forge('tasks/detail', array(
-            'task' => $task,
-            'reference_items' => $reference_items
-            ));
-    }
+    $this->template->title = "タスク詳細";
+    $this->template->content = \View::forge('tasks/detail', array(
+      'task' => $task,
+      'reference_items' => $reference_items
+    ));
+  }
 
 
     public function action_update($task_id)
@@ -182,8 +201,8 @@ class Controller_Tasks extends Controller_Template
           $task['status_text'] = '未着手';
           $task['status_class'] = 'bg-secondary';
       }
-      unset($task); 
     }
+    unset($task); 
 
     return \Response::forge(
         json_encode($tasks, JSON_UNESCAPED_UNICODE),
