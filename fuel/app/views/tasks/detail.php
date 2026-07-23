@@ -13,22 +13,42 @@
     <input type="submit" value="削除">
 </form>
 
+
 <div>
     <h3>参考資料一覧</h3>
-    <?php if (empty($reference_items)): ?>
-        <p>参考資料はありません。</p>
-    <?php else: ?>
-        <ul>
-            <?php foreach ($reference_items as $item): ?>
-                <li>
-                    <a href="<?php echo \Uri::create('referenceitems/detail/' . $item['id']); ?>">
-                        <?php echo e($item['title']); ?>
-                    </a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
+    <input type="hidden" id="taskID" value="<?php echo e($task['id']); ?>">
+
+    <input 
+        type="text" 
+        data-bind="value: keyword, valueUpdate: 'input'"
+        placeholder="参考資料を検索">
+
+    <p data-bind="visible: referenceItems().length === 0">
+        参考資料はありません。
+    </p>
+    <ul data-bind="foreach: referenceItems">
+        <li>
+            <a data-bind="
+                attr: {
+                    href: '/referenceitems/detail/' + id
+                }
+            ">
+                <strong data-bind="text: title"></strong>
+            </a>
+
+            <br>
+
+            <span data-bind="text: memo"></span>
+
+            <br>
+
+            作成日:
+            <span data-bind="text: created_at"></span>
+        </li>
+    </ul>
+
 </div>
 <div>
     <a href="<?php echo \Uri::create('referenceitems/create/' . $task['id']); ?>">参考資料を追加</a>
 </div>
+<?php echo \Asset::js('referenceitems/index.js'); ?>
