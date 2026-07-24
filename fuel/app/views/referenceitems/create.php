@@ -4,6 +4,12 @@
       <div class="card-body">
         <h2 class="card-title mb-4">参考資料作成</h2>
 
+          <?php if (!empty($error)): ?>
+            <div class="alert alert-danger">
+              <?php echo e($error); ?>
+            </div>
+          <?php endif; ?>
+
         <form action="<?php echo Uri::create('referenceitems/create/' . $task_id); ?>" method="post">
           <div class="mb-3">
             <label for="title" class="form-label">タイトル</label>
