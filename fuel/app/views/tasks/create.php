@@ -1,3 +1,9 @@
+<?php if (!empty($error)): ?>
+  <div class="alert alert-danger">
+    <?php echo e($error); ?>
+  </div>
+ <?php endif; ?>
+
 <form
   action="<?php echo Uri::create('tasks/create'); ?>"
   method="post"

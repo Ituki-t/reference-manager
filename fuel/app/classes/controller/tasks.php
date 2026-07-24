@@ -36,6 +36,10 @@ class Controller_Tasks extends Controller_Template
     $tasks = Model_Task::get_tasks_all($user_id);
 
     foreach ($tasks as &$task) {
+      if ($task['deadline'] === null) {
+        $task['deadline'] = '';
+      }
+
       switch ($task['status']) {
         case 0:
           $task['status_text'] = '未着手';
@@ -63,29 +67,39 @@ class Controller_Tasks extends Controller_Template
 
   public function action_create()
   {
-      if (\Input::method() == 'POST') {
-        $title = \Input::post('title');
-        $description = \Input::post('description');
-        $status = \Input::post('status');
-        $dev_location = \Input::post('dev_location');
-        $deadline = \Input::post('deadline');
-        $user_id = \Session::get('user_id');
+    $error = '';
 
+    if (\Input::method() == 'POST') {
+      $title = \Input::post('title');
+      $description = \Input::post('description');
+      $status = \Input::post('status');
+      $dev_location = \Input::post('dev_location');
+      $deadline = \Input::post('deadline');
+      $user_id = \Session::get('user_id');
+
+      if ($deadline === '') {
+        $deadline = null;
+      }
+
+      if (empty($title) || empty($description)) {
+        $error = 'すべての項目を入力してください。';
+      } else {
         Model_Task::create_task($title, $description, $status, $dev_location, $deadline, $user_id);
+        return \Response::redirect('tasks');
+      }
+    } 
 
-          return \Response::redirect('tasks');
-      } 
+    $status_data = array(
+      0 => '未着手',
+      1 => '進行中',
+      2 => '完了'
+    );
 
-      $status_data = array(
-        0 => '未着手',
-        1 => '進行中',
-        2 => '完了'
-      );
-
-      $this->template->title = "タスク作成";
-      $this->template->content = \View::forge('tasks/create', array(
-        'status_data' => $status_data)
-      );
+    $this->template->title = "タスク作成";
+    $this->template->content = \View::forge('tasks/create', array(
+      'status_data' => $status_data,
+      'error' => $error
+    ));
   }
 
 
@@ -94,6 +108,10 @@ class Controller_Tasks extends Controller_Template
     $user_id = \Session::get('user_id');
     // tasks/detailの処理
     $task = Model_Task::get_task_by_id($task_id, $user_id);
+
+    if ($task['deadline'] === null) {
+      $task['deadline'] = '';
+    }
 
     if (!$task) {
       return \Response::redirect('tasks');
@@ -205,6 +223,9 @@ class Controller_Tasks extends Controller_Template
     );
 
     foreach ($tasks as &$task) {
+      if ($task['deadline'] === null) {
+        $task['deadline'] = '';
+      }
       switch ($task['status']) {
         case 0:
           $task['status_text'] = '未着手';
