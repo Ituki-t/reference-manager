@@ -6,16 +6,17 @@ class Controller_Accounts extends Controller_Template
   {
     $error = "";
 
-    if (\Input::method() == 'POST') {
+    if (\Input::method() === 'POST') {
       $username = \Input::post('username');
       $email = \Input::post('email');
-      $password = password_hash(\Input::post('password'), PASSWORD_DEFAULT);
+      $password = \Input::post('password');
 
       if (empty($username) || empty($email) || empty($password)) {
         $error = "すべての項目を入力してください。";
       } elseif (Model_User::get_user_by_username($username)) {
         $error = "このユーザー名は既に使用されています。";
       } else {
+        $password = password_hash($password, PASSWORD_DEFAULT);
         Model_User::create_user($username, $email, $password);
 
         return \Response::redirect('accounts/login');
