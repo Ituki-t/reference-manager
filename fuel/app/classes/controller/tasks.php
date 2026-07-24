@@ -117,9 +117,13 @@ class Controller_Tasks extends Controller_Template
         $task['status_class'] = 'bg-secondary';
     }
 
-
         // reference_items/indexの処理
     $reference_items = Model_ReferenceItem::get_reference_items_by_task_id($task_id);
+
+    foreach ($reference_items as &$item) {
+      $item['tags'] = Model_Tag::get_tags_by_reference_item_id($item['id']);
+    }
+    unset($item);
 
     $this->template->title = "タスク詳細";
     $this->template->content = \View::forge('tasks/detail', array(

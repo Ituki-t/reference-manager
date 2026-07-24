@@ -90,20 +90,25 @@ class Controller_ReferenceItems extends Controller_Template
     }
 
 
-    public function action_search($task_id)
-    {
-        $keyword = \input::get('keyword', '');
+  public function action_search($task_id)
+  {
+    $keyword = \input::get('keyword', '');
 
-        if ($keyword === '') {
-            $reference_items = Model_ReferenceItem::get_reference_items_by_task_id($task_id);
-        } else {
-            $reference_items = model_ReferenceItem::get_reference_items_by_keyword($keyword, $task_id);
-        }
-
-        return \response::forge(
-            json_encode($reference_items, JSON_UNESCAPED_UNICODE),
-            200,
-            array('content-type' => 'application/json')
-        );
+    if ($keyword === '') {
+      $reference_items = Model_ReferenceItem::get_reference_items_by_task_id($task_id);
+    } else {
+      $reference_items = model_ReferenceItem::get_reference_items_by_keyword($keyword, $task_id);
     }
+
+    foreach ($reference_items as &$item) {
+      $item['tags'] = Model_Tag::get_tags_by_reference_item_id($item['id']);
+    }
+    unset($item);
+
+    return \response::forge(
+      json_encode($reference_items, JSON_UNESCAPED_UNICODE),
+      200,
+      array('content-type' => 'application/json')
+    );
+  }
 }

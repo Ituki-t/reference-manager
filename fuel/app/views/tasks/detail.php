@@ -99,8 +99,9 @@
       <thead>
         <tr>
           <th>タイトル</th>
-          <th>メモ</th>
+          <th>URL</th>
           <th>作成日</th>
+          <th>タグ</th>
         </tr>
       </thead>
 
@@ -118,9 +119,19 @@
             </a>
           </td>
 
-          <td data-bind="text: memo"></td>
+          <td data-bind="text: url"></td>
 
           <td data-bind="text: created_at"></td>
+
+          <td>
+            <span data-bind="foreach: tags">
+              <span
+                class="badge bg-secondary me-1"
+                data-bind="text: name"
+              ></span>
+            </span>
+          </td>
+
         </tr>
       </tbody>
     </table>
