@@ -1,85 +1,117 @@
-<form action="<?php echo Uri::create('referenceitems/update/' . $reference_item['id']); ?>" method="post">
-    <div>
-	<label for="title">タイトル</label>
-	<input
-	    type="text"
-	    name="title"
-	    id="title"
-	    value="<?php echo Input::post('title', $reference_item['title']); ?>"
-	>
-    </div>
-    <div>
-	<label for="url">URL</label>
-	<input
-	    type="text"
-	    name="url"
-	    id="url"
-	    value="<?php echo Input::post('url', $reference_item['url']); ?>"
-	>
-    </div>
-    <div>
-	<label for="memo">メモ</label>
-	<textarea
-	    name="memo"
-	    id="memo"
-	><?php echo Input::post('memo', $reference_item['memo']); ?></textarea>
-    </div>
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="card-title mb-4">参考資料編集</h2>
 
+        <form action="<?php echo Uri::create('referenceitems/update/' . $reference_item['id']); ?>" method="post">
+          <div class="mb-3">
+            <label for="title" class="form-label">タイトル</label>
+            <input
+              type="text"
+              name="title"
+              id="title"
+              class="form-control"
+              value="<?php echo Input::post('title', $reference_item['title']); ?>"
+            >
+          </div>
 
-    <div>
-        <label for="tag-keyword">タグ検索</label>
-        <input
-            type="text"
-            name="tag-keyword"
-            id="tag-keyword"
-            data-bind="value: keyword, valueUpdate: 'input'"
-        >
+          <div class="mb-3">
+            <label for="url" class="form-label">URL</label>
+            <input
+              type="text"
+              name="url"
+              id="url"
+              class="form-control"
+              value="<?php echo Input::post('url', $reference_item['url']); ?>"
+            >
+          </div>
 
-        <div data-bind="foreach: searchResults">
-            <button
+          <div class="mb-4">
+            <label for="memo" class="form-label">メモ</label>
+            <textarea
+              name="memo"
+              id="memo"
+              class="form-control"
+              rows="5"
+            ><?php echo Input::post('memo', $reference_item['memo']); ?></textarea>
+          </div>
+
+          <div class="mb-4">
+            <label for="tag-keyword" class="form-label">タグ検索</label>
+            <input
+              type="text"
+              name="tag-keyword"
+              id="tag-keyword"
+              class="form-control mb-3"
+              data-bind="value: keyword, valueUpdate: 'input'"
+            >
+
+            <div
+              class="d-flex flex-wrap gap-2 mb-3"
+              data-bind="foreach: searchResults"
+            >
+              <button
                 type="button"
+                class="btn btn-outline-secondary btn-sm"
                 data-bind="
-                    text: name,
-                    click: $parent.selectTag
+                  text: name,
+                  click: $parent.selectTag
                 "
-            ></button>
-        </div>
+              ></button>
+            </div>
 
-        <button 
-            type="button"
-            data-bind="click: createTag"
-        >新しいタグを作成
-        </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm"
+              data-bind="click: createTag"
+            >
+              新しいタグを作成
+            </button>
+          </div>
 
+          <div class="border rounded p-3 mb-4">
+            <p class="fw-bold mb-3">選択されたタグ:</p>
 
-        <div>
-            <p>選択されたタグ:</p>
-            <div data-bind="foreach: selectedTags">
+            <div
+              class="d-flex flex-wrap gap-2"
+              data-bind="foreach: selectedTags"
+            >
+              <div class="d-flex align-items-center gap-2 border rounded p-2">
                 <span data-bind="text: name"></span>
-                <input 
-                    type="hidden" 
-                    name="tag_ids[]"
-                    data-bind="value: id"
+
+                <input
+                  type="hidden"
+                  name="tag_ids[]"
+                  data-bind="value: id"
                 >
 
-                <button 
-                    type="button" 
-                    data-bind="click: $parent.removeTag"
-                >削除
+                <button
+                  type="button"
+                  class="btn btn-outline-danger btn-sm"
+                  data-bind="click: $parent.removeTag"
+                >
+                  削除
                 </button>
+              </div>
             </div>
-        </div>
+          </div>
 
-
-
-
-
-    <div>
-	<input type="submit" value="更新">
+          <div>
+            <input
+              type="submit"
+              value="更新"
+              class="btn btn-primary"
+            >
+          </div>
+        </form>
+      </div>
     </div>
-</form>
+  </div>
+</div>
+
 <script>
-    window.initialTags = <?php echo json_encode($tags, JSON_UNESCAPED_UNICODE); ?>;
+  window.initialTags = <?php echo json_encode($tags, JSON_UNESCAPED_UNICODE); ?>;
 </script>
 
 <?php echo Asset::js('referenceitems/update.js'); ?>
