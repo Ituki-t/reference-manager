@@ -1,5 +1,4 @@
 <?php
-
 class Controller_Tasks extends Controller_Template
 {
     public function before()
@@ -31,89 +30,155 @@ class Controller_Tasks extends Controller_Template
     }
 
 
-    public function action_index()
-    {
-        $tasks = Model_Task::get_tasks_all();
+  public function action_index()
+  {
+    $user_id = \Session::get('user_id');
+    $tasks = Model_Task::get_tasks_all($user_id);
 
-        $this->template->title = "タスク一覧";
-        $this->template->content = \View::forge('tasks/index', array('tasks' => $tasks));
+    foreach ($tasks as &$task) {
+      switch ($task['status']) {
+        case 0:
+          $task['status_text'] = '未着手';
+          $task['status_class'] = 'bg-secondary';
+          break;
+        case 1:
+          $task['status_text'] = '進行中';
+            $task['status_class'] = 'bg-primary';
+          break;
+        case 2:
+          $task['status_text'] = '完了';
+          $task['status_class'] = 'bg-success';
+          break;
+        default:
+          $task['status_text'] = '未着手';
+          $task['status_class'] = 'bg-secondary';
+      }
+    }
+    unset($task); 
+
+    $this->template->title = "タスク一覧";
+    $this->template->content = \View::forge('tasks/index', array('tasks' => $tasks));
+   }
+
+
+  public function action_create()
+  {
+      if (\Input::method() == 'POST') {
+        $title = \Input::post('title');
+        $description = \Input::post('description');
+        $status = \Input::post('status');
+        $dev_location = \Input::post('dev_location');
+        $deadline = \Input::post('deadline');
+        $user_id = \Session::get('user_id');
+
+        Model_Task::create_task($title, $description, $status, $dev_location, $deadline, $user_id);
+
+          return \Response::redirect('tasks');
+      } 
+
+      $status_data = array(
+        0 => '未着手',
+        1 => '進行中',
+        2 => '完了'
+      );
+
+      $this->template->title = "タスク作成";
+      $this->template->content = \View::forge('tasks/create', array(
+        'status_data' => $status_data)
+      );
+  }
+
+
+  public function action_detail($task_id)
+  {
+    $user_id = \Session::get('user_id');
+    // tasks/detailの処理
+    $task = Model_Task::get_task_by_id($task_id, $user_id);
+
+    if (!$task) {
+      return \Response::redirect('tasks');
     }
 
-
-    public function action_create()
-    {
-        if (\Input::method() == 'POST') {
-            $title = \Input::post('title');
-            $description = \Input::post('description');
-            $status = \Input::post('status');
-            $dev_location = \Input::post('dev_location');
-            $deadline = \Input::post('deadline');
-            $user_id = \Session::get('user_id');
-
-            Model_Task::create_task($title, $description, $status, $dev_location, $deadline, $user_id);
-        }
-
-        $this->template->title = "タスク作成";
-        $this->template->content = \View::forge('tasks/create');
+    switch ($task['status']) {
+      case 0:
+        $task['status_text'] = '未着手';
+        $task['status_class'] = 'bg-secondary';
+        break;
+      case 1:
+        $task['status_text'] = '進行中';
+        $task['status_class'] = 'bg-primary';
+        break;
+      case 2:
+        $task['status_text'] = '完了';
+        $task['status_class'] = 'bg-success';
+        break;
+      default:
+        $task['status_text'] = '未着手';
+        $task['status_class'] = 'bg-secondary';
     }
-
-
-    public function action_detail($task_id)
-    {
-        // tasks/detailの処理
-        $task = Model_Task::get_task_by_id($task_id);
-
-        if (!$task) {
-            return \Response::redirect('tasks');
-        }
 
         // reference_items/indexの処理
-        $reference_items = Model_ReferenceItem::get_reference_items_by_task_id($task_id);
+    $reference_items = Model_ReferenceItem::get_reference_items_by_task_id($task_id);
 
-        $this->template->title = "タスク詳細";
-        $this->template->content = \View::forge('tasks/detail', array(
-            'task' => $task,
-            'reference_items' => $reference_items
-            ));
+    foreach ($reference_items as &$item) {
+      $item['tags'] = Model_Tag::get_tags_by_reference_item_id($item['id']);
+    }
+    unset($item);
+
+    $this->template->title = "タスク詳細";
+    $this->template->content = \View::forge('tasks/detail', array(
+      'task' => $task,
+      'reference_items' => $reference_items
+    ));
+  }
+
+
+  public function action_update($task_id)
+  {
+    $user_id = \Session::get('user_id');
+    $task = Model_Task::get_task_by_id($task_id, $user_id);
+
+    if (!$task) {
+        return \Response::redirect('tasks');
     }
 
-
-    public function action_update($task_id)
-    {
-        $task = Model_Task::get_task_by_id($task_id);
-
-        if (!$task) {
-            return \Response::redirect('tasks');
-        }
-
-        $user_id = \Session::get('user_id');
-        if ($task['user_id'] !== $user_id) {
-            \Session::set_flash('error', 'このタスクを更新する権限がありません。');
-            return \Response::redirect('tasks');
-        }
-
-        if (\Input::method() == 'POST') {
-            $title = \Input::post('title');
-            $description = \Input::post('description');
-            $status = \Input::post('status');
-            $dev_location = \Input::post('dev_location');
-            $deadline = \Input::post('deadline');
-            $updated_at = time();
-
-            Model_Task::update_task($task_id, $title, $description, $status, $dev_location, $deadline, $updated_at);
-
-            return \Response::redirect('tasks/detail/' . $task_id);
-        }
-
-        $this->template->title = "タスク編集";
-        $this->template->content = \View::forge('tasks/update', array('task' => $task));
+    if ($task['user_id'] !== $user_id) {
+      \Session::set_flash('error', 'このタスクを更新する権限がありません。');
+      return \Response::redirect('tasks');
     }
+ 
+    if (\Input::method() == 'POST') {
+      $title = \Input::post('title');
+      $description = \Input::post('description');
+      $status = \Input::post('status');
+      $dev_location = \Input::post('dev_location');
+      $deadline = \Input::post('deadline');
+      $updated_at = time();
+ 
+      Model_Task::update_task($task_id, $title, $description, $status, $dev_location, $deadline, $user_id);
+
+      return \Response::redirect('tasks/detail/' . $task_id);
+    }   
+
+    $status_data = array(
+      0 => '未着手',
+      1 => '進行中',
+      2 => '完了'
+    );
+
+    $this->template->title = "タスク編集";
+    $this->template->content = \View::forge('tasks/update', array(
+        'task' => $task,
+        'status_data' => $status_data
+    ));
+  }
 
 
     public function action_delete($task_id)
     {
-        $task = Model_Task::get_task_by_id($task_id);
         $user_id = \Session::get('user_id');
+
+        $task = Model_Task::get_task_by_id($task_id, $user_id);
 
         if (!$task) {
             return \Response::redirect('tasks');
@@ -123,7 +188,47 @@ class Controller_Tasks extends Controller_Template
             return \Response::redirect('tasks');
         }
 
-        Model_Task::delete_task($task_id);
+        Model_Task::delete_task($task_id, $user_id);
         return \Response::redirect('tasks');
+    }
+
+
+  public function action_search()
+  {
+
+    $user_id = \Session::get('user_id');
+    $keyword = trim(\Input::get('keyword', ''));
+
+    $tasks = Model_Task::search_tasks_by_keyword(
+      $user_id,
+      $keyword
+    );
+
+    foreach ($tasks as &$task) {
+      switch ($task['status']) {
+        case 0:
+          $task['status_text'] = '未着手';
+          $task['status_class'] = 'bg-secondary';
+          break;
+        case 1:
+          $task['status_text'] = '進行中';
+            $task['status_class'] = 'bg-primary';
+          break;
+        case 2:
+          $task['status_text'] = '完了';
+          $task['status_class'] = 'bg-success';
+          break;
+        default:
+          $task['status_text'] = '未着手';
+          $task['status_class'] = 'bg-secondary';
+      }
+    }
+    unset($task); 
+
+    return \Response::forge(
+        json_encode($tasks, JSON_UNESCAPED_UNICODE),
+        200,
+        array('Content-Type' => 'application/json')
+    );
     }
 }

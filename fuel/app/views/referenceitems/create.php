@@ -1,5 +1,3 @@
-<?php echo Asset::js('referenceitems/create.js'); ?>
-
 <form action="<?php echo Uri::create('referenceitems/create/' . $task_id); ?>" method="post">
     <div>
         <label for="title">タイトル</label>
@@ -72,3 +70,4 @@
         </div>
     <button type="submit">作成</button>
 </form>
+<?php echo Asset::js('referenceitems/create.js'); ?>
