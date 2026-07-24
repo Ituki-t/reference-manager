@@ -173,6 +173,10 @@ class Controller_Tasks extends Controller_Template
       $deadline = \Input::post('deadline');
       $updated_at = time();
  
+      if ($deadline === '') {
+        $deadline = null;
+      }
+
       Model_Task::update_task($task_id, $title, $description, $status, $dev_location, $deadline, $user_id);
 
       return \Response::redirect('tasks/detail/' . $task_id);
