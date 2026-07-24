@@ -31,7 +31,7 @@ class Controller_Accounts extends Controller_Template
   {
     $error = "";
 
-    if (\Input::method() == 'POST') {
+    if (\Input::method() === 'POST') {
       $username = \Input::post('username');
       $password = \Input::post('password');
       $remember = \Input::post('remember', false);
