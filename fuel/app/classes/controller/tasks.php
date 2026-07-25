@@ -1,33 +1,34 @@
 <?php
 class Controller_Tasks extends Controller_Template
 {
-    public function before()
-    {
-        parent::before();
 
-        if (\Session::get('user_id') !== null) {
-            return ;
-        }
+  public function before()
+  {
+    parent::before();
 
-        // loginを保持する処理
-        \Config::load('remember', true);
-        $cookie_name = \Config::get('remember.cookie_name');
-        $token = \Cookie::get($cookie_name);
-
-        if (empty($token)) {
-            return \Response::redirect('accounts/login');
-        }
-
-        $user = Model_User::get_user_by_token($token);
-
-        if (!$user) {
-            \Cookie::delete($cookie_name);
-            return \Response::redirect('accounts/login');
-        }
-
-        \Session::set('user_id', $user['id']);
-        \Session::set('username', $user['username']);
+    if (\Session::get('user_id') !== null) {
+      return ;
     }
+
+    // loginを保持する処理
+    \Config::load('remember', true);
+    $cookie_name = \Config::get('remember.cookie_name');
+    $token = \Cookie::get($cookie_name);
+
+    if (empty($token)) {
+      return \Response::redirect('accounts/login');
+    }
+
+    $user = Model_User::get_user_by_token($token);
+
+    if (!$user) {
+      \Cookie::delete($cookie_name);
+      return \Response::redirect('accounts/login');
+    }
+
+    \Session::set('user_id', $user['id']);
+    \Session::set('username', $user['username']);
+  }
 
 
   public function action_index()
@@ -47,7 +48,7 @@ class Controller_Tasks extends Controller_Template
           break;
         case 1:
           $task['status_text'] = '進行中';
-            $task['status_class'] = 'bg-primary';
+          $task['status_class'] = 'bg-primary';
           break;
         case 2:
           $task['status_text'] = '完了';
@@ -62,7 +63,7 @@ class Controller_Tasks extends Controller_Template
 
     $this->template->title = "タスク一覧";
     $this->template->content = \View::forge('tasks/index', array('tasks' => $tasks));
-   }
+  }
 
 
   public function action_create()
@@ -135,7 +136,7 @@ class Controller_Tasks extends Controller_Template
         $task['status_class'] = 'bg-secondary';
     }
 
-        // reference_items/indexの処理
+    // reference_items/indexの処理
     $reference_items = Model_ReferenceItem::get_reference_items_by_task_id($task_id);
 
     foreach ($reference_items as &$item) {
@@ -157,7 +158,7 @@ class Controller_Tasks extends Controller_Template
     $task = Model_Task::get_task_by_id($task_id, $user_id);
 
     if (!$task) {
-        return \Response::redirect('tasks');
+      return \Response::redirect('tasks');
     }
 
     if ($task['user_id'] !== $user_id) {
@@ -190,29 +191,30 @@ class Controller_Tasks extends Controller_Template
 
     $this->template->title = "タスク編集";
     $this->template->content = \View::forge('tasks/update', array(
-        'task' => $task,
-        'status_data' => $status_data
+      'task' => $task,
+      'status_data' => $status_data
     ));
   }
 
 
-    public function action_delete($task_id)
-    {
-        $user_id = \Session::get('user_id');
+  public function action_delete($task_id)
+  {
+    $user_id = \Session::get('user_id');
 
-        $task = Model_Task::get_task_by_id($task_id, $user_id);
+    $task = Model_Task::get_task_by_id($task_id, $user_id);
 
-        if (!$task) {
-            return \Response::redirect('tasks');
-        }
-        if ($task['user_id'] !== $user_id) {
-            \Session::set_flash('error', 'このタスクを削除する権限がありません。');
-            return \Response::redirect('tasks');
-        }
-
-        Model_Task::delete_task($task_id, $user_id);
-        return \Response::redirect('tasks');
+    if (!$task) {
+      return \Response::redirect('tasks');
     }
+
+    if ($task['user_id'] !== $user_id) {
+      \Session::set_flash('error', 'このタスクを削除する権限がありません。');
+      return \Response::redirect('tasks');
+    }
+
+    Model_Task::delete_task($task_id, $user_id);
+    return \Response::redirect('tasks');
+  }
 
 
   public function action_search()
@@ -237,7 +239,7 @@ class Controller_Tasks extends Controller_Template
           break;
         case 1:
           $task['status_text'] = '進行中';
-            $task['status_class'] = 'bg-primary';
+          $task['status_class'] = 'bg-primary';
           break;
         case 2:
           $task['status_text'] = '完了';
@@ -251,9 +253,9 @@ class Controller_Tasks extends Controller_Template
     unset($task); 
 
     return \Response::forge(
-        json_encode($tasks, JSON_UNESCAPED_UNICODE),
-        200,
-        array('Content-Type' => 'application/json')
+      json_encode($tasks, JSON_UNESCAPED_UNICODE),
+      200,
+      array('Content-Type' => 'application/json')
     );
-    }
+  }
 }
