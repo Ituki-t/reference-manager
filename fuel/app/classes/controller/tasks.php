@@ -11,30 +11,30 @@ class Controller_Tasks extends Controller_Template
     }
 
     // loginを保持する処理
-    \Config::load('remember', true);
-    $cookie_name = \Config::get('remember.cookie_name');
-    $token = \Cookie::get($cookie_name);
+    \config::load('remember', true);
+    $cookie_name = \config::get('remember.cookie_name');
+    $token = \cookie::get($cookie_name);
 
     if (empty($token)) {
-      return \Response::redirect('accounts/login');
+      return \response::redirect('accounts/login');
     }
 
-    $user = Model_User::get_user_by_token($token);
+    $user = model_user::get_user_by_token($token);
 
     if (!$user) {
-      \Cookie::delete($cookie_name);
-      return \Response::redirect('accounts/login');
+      \cookie::delete($cookie_name);
+      return \response::redirect('accounts/login');
     }
 
-    \Session::set('user_id', $user['id']);
-    \Session::set('username', $user['username']);
+    \session::set('user_id', $user['id']);
+    \session::set('username', $user['username']);
   }
 
 
   public function action_index()
   {
-    $user_id = \Session::get('user_id');
-    $tasks = Model_Task::get_tasks_all($user_id);
+    $user_id = \session::get('user_id');
+    $tasks = model_task::get_tasks_all($user_id);
 
     foreach ($tasks as &$task) {
       if ($task['deadline'] === null) {
@@ -126,13 +126,14 @@ class Controller_Tasks extends Controller_Template
     // tasks/detailの処理
     $task = Model_Task::get_task_by_id($task_id, $user_id);
 
+    if (!$task) {
+      return \Response::redirect('tasks');
+    }
+
     if ($task['deadline'] === null) {
       $task['deadline'] = '';
     }
 
-    if (!$task) {
-      return \Response::redirect('tasks');
-    }
 
     switch ($task['status']) {
       case 0:
@@ -144,10 +145,10 @@ class Controller_Tasks extends Controller_Template
         $task['status_class'] = 'bg-primary';
         break;
       case 2:
-        $task['status_text'] = '完了';
-        $task['status_class'] = 'bg-success';
-        break;
-      default:
+        $task['status_text'] = '完了'; 
+        $task['status_class'] = 'bg-success'; 
+        break; 
+      default: 
         $task['status_text'] = '未着手';
         $task['status_class'] = 'bg-secondary';
     }
@@ -194,6 +195,10 @@ class Controller_Tasks extends Controller_Template
       return \Response::redirect('tasks');
     }
 
+    if ($task['deadline'] === null) {
+      $task['deadline'] = '';
+    }
+
     $this->render_update($task);
   }
 
@@ -211,13 +216,20 @@ class Controller_Tasks extends Controller_Template
     $description = \Input::post('description');
     $status = \Input::post('status');
     $dev_location = \Input::post('dev_location');
-    $deadline = \Input::post('deadline');
+    $deadline = \Input::post('deadline', '');
 
     if ($deadline === '') {
       $deadline = null;
     }
 
     if (empty($title) || empty($description)) {
+
+      $task['title'] = $title;
+      $task['description'] = $description;
+      $task['status'] = $status;
+      $task['dev_location'] = $dev_location;
+      $task['deadline'] = $deadline === null ? '' : $deadline;
+
       $error = 'すべての項目を入力して下さい。';
       $this->render_update($task, $error);
       return;
@@ -229,18 +241,13 @@ class Controller_Tasks extends Controller_Template
   }
 
 
-  public function action_delete($task_id)
+  public function post_delete($task_id)
   {
     $user_id = \Session::get('user_id');
 
     $task = Model_Task::get_task_by_id($task_id, $user_id);
 
     if (!$task) {
-      return \Response::redirect('tasks');
-    }
-
-    if ($task['user_id'] !== $user_id) {
-      \Session::set_flash('error', 'このタスクを削除する権限がありません。');
       return \Response::redirect('tasks');
     }
 
