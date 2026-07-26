@@ -97,7 +97,7 @@ class Controller_Accounts extends Controller_Template
   }
 
 
-  public function action_logout()
+  public function post_logout()
   {
     \Config::load('remember', true);
     $cookie_name = \Config::get('remember.cookie_name');

@@ -43,11 +43,15 @@
             ['class' => 'btn btn-outline-success']
           ); ?>
         <?php else: ?>
-          <?php echo Html::anchor(
-            'accounts/logout',
-            'ログアウト',
-            ['class' => 'btn btn-outline-danger']
-          ); ?>
+          <form
+            action="<?php echo \Uri::create('accounts/logout'); ?>"
+            method="post"
+            class="d-inline"
+          >
+            <button type="submit" class="btn btn-outline-danger">
+              ログアウト
+            </button>
+          </form>
         <?php endif; ?>
       </div>
 
