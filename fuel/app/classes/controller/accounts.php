@@ -19,9 +19,9 @@ class Controller_Accounts extends Controller_Template
 
   public function post_signup()
   {
-    $username = \Input::post('username');
-    $email = \Input::post('email');
-    $password = \Input::post('password');
+    $username = \Input::post('username', '');
+    $email = \Input::post('email', '');
+    $password = \Input::post('password', '');
 
     if (empty($username) || empty($email) || empty($password)) {
       $error = "すべての項目を入力してください。";
@@ -42,45 +42,58 @@ class Controller_Accounts extends Controller_Template
   }
 
 
-  public function action_login()
+  private function render_login($error = '')
   {
-    $error = "";
-
-    if (\Input::method() === 'POST') {
-      $username = \Input::post('username');
-      $password = \Input::post('password');
-      $remember = \Input::post('remember', false);
-
-      // Validate input
-      if (empty($username) || empty($password)) {
-        $error = "すべての項目を入力してください。";
-      } else {
-        $user = Model_User::get_user_by_username($username);
-
-        if ($user && password_verify($password, $user['password'])) {
-          \Session::set('user_id', $user['id']);
-          \Session::set('username', $user['username']);
-
-          if ($remember) {
-            \Config::load('remember', true);
-            $token = bin2hex(random_bytes(32));
-
-            Model_User::set_remember_token($user['id'], $token);
-
-            \Cookie::set(
-              \Config::get('remember.cookie_name'),
-              $token,
-              \Config::get('remember.expiration')
-            );
-          }
-          return \Response::redirect('tasks');
-        } else {
-          $error = "ユーザー名またはパスワードが正しくありません。";
-        }
-      }
-    }
     $this->template->title = "ログイン";
-    $this->template->content = \View::forge('accounts/login', array('error' => $error));
+    $this->template->content = \View::forge('accounts/login', array(
+      'error' => $error
+    ));
+  }
+
+
+  public function get_login()
+  {
+    $this->render_login();
+  }
+
+
+  public function post_login()
+  {
+    $username = \Input::post('username', '');
+    $password = \Input::post('password', '');
+    $remember = \Input::post('remember', false);
+
+    // Validate input
+    if (empty($username) || empty($password)) {
+      $error = "すべての項目を入力してください。";
+      $this->render_login($error);
+      return;
+    }
+
+    $user = Model_User::get_user_by_username($username);
+
+    if ($user && password_verify($password, $user['password'])) {
+      \Session::set('user_id', $user['id']);
+      \Session::set('username', $user['username']);
+
+      if ($remember) {
+        \Config::load('remember', true);
+        $token = bin2hex(random_bytes(32));
+
+        Model_User::set_remember_token($user['id'], $token);
+
+        \Cookie::set(
+          \Config::get('remember.cookie_name'),
+          $token,
+          \Config::get('remember.expiration')
+        );
+      }
+      return \Response::redirect('tasks');
+    } 
+
+    $error = "ユーザー名またはパスワードが正しくありません。";
+    $this->render_login($error);
+    return;
   }
 
 
