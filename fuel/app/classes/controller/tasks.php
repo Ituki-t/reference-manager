@@ -66,30 +66,8 @@ class Controller_Tasks extends Controller_Template
   }
 
 
-  public function action_create()
+  public function render_create($error = '')
   {
-    $error = '';
-
-    if (\Input::method() == 'POST') {
-      $title = \Input::post('title');
-      $description = \Input::post('description');
-      $status = \Input::post('status');
-      $dev_location = \Input::post('dev_location');
-      $deadline = \Input::post('deadline');
-      $user_id = \Session::get('user_id');
-
-      if ($deadline === '') {
-        $deadline = null;
-      }
-
-      if (empty($title) || empty($description)) {
-        $error = 'すべての項目を入力してください。';
-      } else {
-        Model_Task::create_task($title, $description, $status, $dev_location, $deadline, $user_id);
-        return \Response::redirect('tasks');
-      }
-    } 
-
     $status_data = array(
       0 => '未着手',
       1 => '進行中',
@@ -102,6 +80,45 @@ class Controller_Tasks extends Controller_Template
       'error' => $error
     ));
   }
+
+
+  public function get_create()
+  {
+    $this->render_create();
+  }
+
+
+  public function post_create()
+  {
+    $title = \Input::post('title');
+    $description = \Input::post('description');
+    $status = \Input::post('status');
+    $dev_location = \Input::post('dev_location');
+    $deadline = \Input::post('deadline');
+    $user_id = \Session::get('user_id');
+
+    if ($deadline === '') {
+      $deadline = null;
+    }
+
+    if (empty($title) || empty($description)) {
+      $error = 'すべての項目を入力して下さい。';
+      $this->render_create($error);
+      return;
+    }
+
+    Model_Task::create_task(
+      $title,
+      $description,
+      $status,
+      $dev_location,
+      $deadline,
+      $user_id
+    );
+
+    return \Response::redirect('tasks');
+  }
+
 
 
   public function action_detail($task_id)
