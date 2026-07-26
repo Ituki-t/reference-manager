@@ -21,7 +21,7 @@ class Controller_Tags extends Controller
   }
 
 
-  public function action_create()
+  public function post_create()
   {
     $user_id = \Session::get('user_id');
     $tag_name = trim(\Input::post('tag_name', ''));
