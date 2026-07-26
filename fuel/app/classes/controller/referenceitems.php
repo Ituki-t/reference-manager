@@ -2,35 +2,43 @@
 
 class Controller_ReferenceItems extends Controller_Template
 {
-  public function action_create($task_id)
+  private function render_create($task_id, $error = '')
   {
-    $error = '';
-
-    if (\Input::method() == 'POST') {
-      $title = \Input::post('title');
-      $url = \Input::post('url');
-      $memo = \Input::post('memo');
-
-      $tag_ids = \Input::post('tag_ids', array());
-
-      if (empty($title) || empty($url)) {
-        $error = 'タイトルとURLは必須です。';
-      } else {
-        $reference_item_id = Model_ReferenceItem::create_reference_item($task_id, $title, $url, $memo);
-
-        foreach ($tag_ids as $tag_id) {
-          Model_ReferenceItemTag::add_tag_to_reference_item($reference_item_id, $tag_id);
-        }
-
-        return \Response::redirect(\Uri::create('tasks/detail/' . $task_id));
-      }
-    }
-
     $this->template->title = '参考資料の作成';
     $this->template->content = \View::forge('referenceitems/create', array(
       'task_id' => $task_id,
       'error' => $error
     ));
+  }
+
+
+  public function get_create($task_id)
+  {
+    $this->render_create($task_id);
+  }
+
+
+  public function post_create($task_id)
+  {
+    $title = \Input::post('title');
+    $url = \Input::post('url');
+    $memo = \Input::post('memo');
+
+    $tag_ids = \Input::post('tag_ids', array());
+
+    if (empty($title) || empty($url)) {
+      $error = 'タイトルとURLは必須です。';
+      $this->render_create($task_id, $error);
+      return;
+    }
+
+    $reference_item_id = Model_ReferenceItem::create_reference_item($task_id, $title, $url, $memo);
+
+    foreach ($tag_ids as $tag_id) {
+      Model_ReferenceItemTag::add_tag_to_reference_item($reference_item_id, $tag_id);
+    }
+
+    return \Response::redirect(\Uri::create('tasks/detail/' . $task_id)); 
   }
 
 
