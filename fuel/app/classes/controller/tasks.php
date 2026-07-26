@@ -66,7 +66,7 @@ class Controller_Tasks extends Controller_Template
   }
 
 
-  public function render_create($error = '')
+  private function render_create($error = '')
   {
     $status_data = array(
       0 => '未着手',
@@ -120,7 +120,6 @@ class Controller_Tasks extends Controller_Template
   }
 
 
-
   public function action_detail($task_id)
   {
     $user_id = \Session::get('user_id');
@@ -169,7 +168,24 @@ class Controller_Tasks extends Controller_Template
   }
 
 
-  public function action_update($task_id)
+  private function render_update($task, $error = '')
+  {
+    $status_data = array(
+      0 => '未着手',
+      1 => '進行中',
+      2 => '完了'
+    );
+
+    $this->template->title = 'タスク編集';
+    $this->template->content = \View::forge('tasks/update', array(
+      'task' => $task,
+      'status_data' => $status_data,
+      'error' => $error
+    ));
+  }
+
+
+  public function get_update($task_id)
   {
     $user_id = \Session::get('user_id');
     $task = Model_Task::get_task_by_id($task_id, $user_id);
@@ -178,39 +194,38 @@ class Controller_Tasks extends Controller_Template
       return \Response::redirect('tasks');
     }
 
-    if ($task['user_id'] !== $user_id) {
-      \Session::set_flash('error', 'このタスクを更新する権限がありません。');
+    $this->render_update($task);
+  }
+
+
+  public function post_update($task_id)
+  {
+    $user_id = \Session::get('user_id');
+    $task = Model_Task::get_task_by_id($task_id, $user_id);
+
+    if (!$task) {
       return \Response::redirect('tasks');
     }
- 
-    if (\Input::method() == 'POST') {
-      $title = \Input::post('title');
-      $description = \Input::post('description');
-      $status = \Input::post('status');
-      $dev_location = \Input::post('dev_location');
-      $deadline = \Input::post('deadline');
-      $updated_at = time();
- 
-      if ($deadline === '') {
-        $deadline = null;
-      }
 
-      Model_Task::update_task($task_id, $title, $description, $status, $dev_location, $deadline, $user_id);
+    $title = \Input::post('title');
+    $description = \Input::post('description');
+    $status = \Input::post('status');
+    $dev_location = \Input::post('dev_location');
+    $deadline = \Input::post('deadline');
 
-      return \Response::redirect('tasks/detail/' . $task_id);
-    }   
+    if ($deadline === '') {
+      $deadline = null;
+    }
 
-    $status_data = array(
-      0 => '未着手',
-      1 => '進行中',
-      2 => '完了'
-    );
+    if (empty($title) || empty($description)) {
+      $error = 'すべての項目を入力して下さい。';
+      $this->render_update($task, $error);
+      return;
+    }
 
-    $this->template->title = "タスク編集";
-    $this->template->content = \View::forge('tasks/update', array(
-      'task' => $task,
-      'status_data' => $status_data
-    ));
+    Model_Task::update_task($task_id, $title, $description, $status, $dev_location, $deadline, $user_id);
+
+    return \Response::redirect('tasks/detail/' . $task_id);
   }
 
 
