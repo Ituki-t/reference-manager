@@ -102,7 +102,7 @@ class Controller_Tasks extends Controller_Template
     }
 
     if (empty($title) || empty($description)) {
-      $error = 'すべての項目を入力して下さい。';
+      $error = 'タイトルと説明を入力して下さい。';
       $this->render_create($error);
       return;
     }
@@ -230,7 +230,7 @@ class Controller_Tasks extends Controller_Template
       $task['dev_location'] = $dev_location;
       $task['deadline'] = $deadline === null ? '' : $deadline;
 
-      $error = 'すべての項目を入力して下さい。';
+      $error = 'タイトルと説明を入力して下さい。';
       $this->render_update($task, $error);
       return;
     }
