@@ -11,6 +11,7 @@
           <?php endif; ?>
 
         <form action="<?php echo Uri::create('referenceitems/create/' . $task_id); ?>" method="post">
+          <?php echo \Form::csrf(); ?>
           <div class="mb-3">
             <label for="title" class="form-label">タイトル</label>
             <input
