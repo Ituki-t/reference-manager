@@ -113,6 +113,12 @@
         value="作成"
         class="btn btn-primary"
       >
+
+      <?php echo Html::anchor(
+        'tasks/index',
+        'キャンセル',
+        array('class' => 'btn btn-secondary')
+      ); ?>
     </div>
 
   </div>
