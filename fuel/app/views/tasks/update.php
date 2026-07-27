@@ -9,6 +9,7 @@
   method="post"
   class="card"
 >
+  <?php echo \Form::csrf(); ?>
   <div class="card-body">
     <h2 class="card-title mb-4">タスク編集</h2>
 
