@@ -105,6 +105,11 @@
           </div>
 
           <button type="submit" class="btn btn-primary">作成</button>
+          <?php echo Html::anchor(
+            'tasks/detail/' . $task_id,
+            'キャンセル',
+            array('class' => 'btn btn-secondary')
+          ); ?>
         </form>
       </div>
     </div>

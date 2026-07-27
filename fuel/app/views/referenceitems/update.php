@@ -110,6 +110,11 @@
               value="更新"
               class="btn btn-primary"
             >
+            <?php echo Html::anchor(
+              'referenceitems/detail/' . $reference_item['id'],
+              'キャンセル',
+              ['class' => 'btn btn-secondary ms-2']
+            ); ?>
           </div>
         </form>
       </div>
