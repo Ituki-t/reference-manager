@@ -80,8 +80,11 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
+      const csrfToken = document.querySelector('input[name="fuel_csrf_token"]');
+
       const formData = new FormData();
       formData.append('tag_name', newTagName);
+      formData.append('fuel_csrf_token', csrfToken ? csrfToken.value : '');
 
       fetch('/tags/create', {
         method: 'POST',
@@ -96,8 +99,17 @@ document.addEventListener('DOMContentLoaded', function () {
           });
         })
         .then(function (createdTag) {
-          self.selectedTags.push(createdTag);
+          self.selectedTags.push({
+            id: createdTag.id,
+            name: createdTag.name
+          });
           self.keyword('');
+
+          document
+            .querySelectorAll('input[name="fuel_csrf_token"]')
+            .forEach(function (input) {
+              input.value = createdTag.csrf_token;
+            });
         })
         .catch(function (error) {
           console.error('Error creating tag:', error);
