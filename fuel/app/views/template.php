@@ -48,6 +48,7 @@
             method="post"
             class="d-inline"
           >
+            <?php echo \Form::csrf(); ?>
             <button type="submit" class="btn btn-outline-danger">
               ログアウト
             </button>
