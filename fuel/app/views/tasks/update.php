@@ -80,6 +80,12 @@
         value="更新"
         class="btn btn-primary"
       >
+ 
+      <?php echo Html::anchor(
+        'tasks/detail/' . $task['id'],
+        'キャンセル',
+        ['class' => 'btn btn-secondary ms-2']
+      ); ?>
     </div>
   </div>
 </form>
