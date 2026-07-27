@@ -47,7 +47,8 @@ class Controller_Tags extends Controller
     return \Response::forge(
       json_encode(array(
         'id' => $tag_id,
-        'name' => $tag_name
+        'name' => $tag_name,
+        'csrf_token' => \Security::fetch_token(),
       ), JSON_UNESCAPED_UNICODE),
       201,
       array('Content-Type' => 'application/json')

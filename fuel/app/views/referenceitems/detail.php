@@ -84,6 +84,7 @@
             method="post"
             onsubmit="return confirm('本当に削除しますか？');"
           >
+            <?php echo \Form::csrf(); ?>
             <input
               type="submit"
               value="削除"

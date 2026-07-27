@@ -13,6 +13,7 @@
           <?php endif; ?>
 
         <form action="<?php echo Uri::create('accounts/login'); ?>" method="post">
+        <?php echo \Form::csrf(); ?>
 
           <div class="mb-3">
             <label
