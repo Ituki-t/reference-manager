@@ -1,6 +1,6 @@
 <?php
 
-class Controller_ReferenceItems extends Controller_Template
+class Controller_ReferenceItems extends Controller_Base
 {
   private function render_create($task_id, $error = '')
   {
