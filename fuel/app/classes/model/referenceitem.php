@@ -40,11 +40,14 @@ class Model_ReferenceItem extends \Model
   }
 
 
-  public static function get_reference_item_by_id($reference_item_id)
+  public static function get_reference_item_by_id($reference_item_id, $user_id)
   {
-    return \DB::select()
+    return \DB::select('reference_items.*')
       ->from('reference_items')
-      ->where('id', $reference_item_id)
+      ->join('tasks', 'INNER')
+      ->on('reference_items.task_id', '=', 'tasks.id')
+      ->where('reference_items.id', $reference_item_id)
+      ->where('tasks.user_id', $user_id)
       ->execute()
       ->current();
   }
