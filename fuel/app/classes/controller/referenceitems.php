@@ -129,7 +129,9 @@ class Controller_ReferenceItems extends Controller_Base
 
   public function post_delete($reference_item_id)
   {
-    $reference_item = Model_ReferenceItem::get_reference_item_by_id($reference_item_id);
+    $user_id = \Session::get('user_id');
+
+    $reference_item = Model_ReferenceItem::get_reference_item_by_id($reference_item_id, $user_id);
 
     if (!$reference_item) {
       return \Response::redirect(\Uri::create('tasks'));
