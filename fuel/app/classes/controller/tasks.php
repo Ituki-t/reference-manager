@@ -126,10 +126,27 @@ class Controller_Tasks extends Controller_Base
     // reference_items/indexの処理
     $reference_items = Model_ReferenceItem::get_reference_items_by_task_id($task_id);
 
-    foreach ($reference_items as &$item) {
-      $item['tags'] = Model_Tag::get_tags_by_reference_item_id($item['id']);
+    $reference_item_ids = array_column($reference_items, 'id');
+
+    $tags = Model_Tag::get_tags_by_reference_item_ids($reference_item_ids);
+    $tags_by_reference_item_id = array();
+
+    foreach ($tags as $tag) {
+      $reference_item_id = $tag['reference_item_id'];
+      if (!isset($tags_by_reference_item_id[$reference_item_id])) {
+        $tags_by_reference_item_id[$reference_item_id] = array();
+      }
+      $tags_by_reference_item_id[$reference_item_id][] = array(
+        'id' => $tag['id'],
+        'name' => $tag['name']
+      );
     }
-    unset($item);
+
+    foreach ($reference_items as &$reference_item) {
+      $reference_item['tags'] = $tags_by_reference_item_id[$reference_item['id']] ?? array();
+    } 
+    unset($reference_item);
+
 
     $this->template->title = "タスク詳細";
     $this->template->content = \View::forge('tasks/detail', array(
