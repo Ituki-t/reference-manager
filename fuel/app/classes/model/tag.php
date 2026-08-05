@@ -38,6 +38,26 @@ class Model_Tag extends \Model
   }
 
 
+  public static function get_tags_by_reference_item_ids($reference_item_ids)
+  {
+    if (empty($reference_item_ids)) {
+      return array();
+    }
+
+    return \DB::select(
+      'reference_item_tags.reference_item_id',
+      'tags.id',
+      'tags.name'
+    )
+      ->from('tags')
+      ->join('reference_item_tags')
+      ->on('reference_item_tags.tag_id', '=', 'tags.id')
+      ->where('reference_item_tags.reference_item_id', 'in', $reference_item_ids)
+      ->execute()
+      ->as_array();
+  }
+
+
   public static function get_tag_by_name($tag_name, $user_id)
   {
     return \DB::select()
