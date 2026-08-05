@@ -1,6 +1,6 @@
 <?php
 
-class Controller_Tags extends Controlle_Base
+class Controller_Tags extends Controller
 {
   public function action_index()
   {

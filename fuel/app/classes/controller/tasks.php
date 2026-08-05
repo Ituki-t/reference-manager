@@ -1,6 +1,36 @@
 <?php
-class Controller_Tasks extends Controller_Base
+class Controller_Tasks extends Controller_Template
 {
+
+  public function before()
+  {
+    parent::before();
+
+    if (\Session::get('user_id') !== null) {
+      return ;
+    }
+
+    // loginを保持する処理
+    \config::load('remember', true);
+    $cookie_name = \config::get('remember.cookie_name');
+    $token = \cookie::get($cookie_name);
+
+    if (empty($token)) {
+      return \response::redirect('accounts/login');
+    }
+
+    $user = model_user::get_user_by_token($token);
+
+    if (!$user) {
+      \cookie::delete($cookie_name);
+      return \response::redirect('accounts/login');
+    }
+
+    \session::set('user_id', $user['id']);
+    \session::set('username', $user['username']);
+  }
+
+
   public function action_index()
   {
     $user_id = \session::get('user_id');
