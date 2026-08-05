@@ -19,7 +19,9 @@ class Controller_Base extends Controller_Template
       return \Response::redirect('accounts/login');
     }
 
-    $user = Model_User::get_user_by_token($token);
+    $token_hash = hash('sha256', $token);
+
+    $user = Model_User::get_user_by_token($token_hash);
 
     if (!$user) {
       \Cookie::delete($cookie_name);

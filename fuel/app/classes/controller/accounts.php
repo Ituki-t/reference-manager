@@ -79,8 +79,9 @@ class Controller_Accounts extends Controller_Template
       if ($remember) {
         \Config::load('remember', true);
         $token = bin2hex(random_bytes(32));
+        $token_hash = hash('sha256', $token);
 
-        Model_User::set_remember_token($user['id'], $token);
+        Model_User::set_remember_token($user['id'], $token_hash);
 
         \Cookie::set(
           \Config::get('remember.cookie_name'),
